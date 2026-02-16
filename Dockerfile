@@ -6,4 +6,5 @@ RUN apt-get update && \
 
 RUN pip install --upgrade pip
 RUN pip install unstructured && \
-    pip install unstructured[all-docs]
+    pip install unstructured[all-docs] && \
+    pip install pytesseract
