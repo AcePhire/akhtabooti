@@ -6,6 +6,7 @@ import pytesseract
 import cv2
 from pdf2image import convert_from_path
 
+from text_utils import * 
 from file_utils import * 
 
 TERM_WIDTH, TERM_HEIGHT = shutil.get_terminal_size()
@@ -15,6 +16,17 @@ def help():
 
 def scan_image(image):
     return pytesseract.image_to_string(image)
+
+def search_for_piis(text):
+    rules = get_regexes()
+
+    pii = {
+        "email accounts": email_pii(rules, text),
+        "phone numbers": phone_pii(rules, text),
+        "keywords": keyword_pii(rules, text)
+    }
+
+    print(pii)
 
 if __name__ == "__main__":
     # Get directory
@@ -41,6 +53,6 @@ if __name__ == "__main__":
             else:
                 text = extract_text(file)
 
-            print(text)
+            search_for_piis(text) 
             print("-"*TERM_WIDTH)
 
