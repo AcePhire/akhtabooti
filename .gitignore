@@ -2,3 +2,6 @@
 *.png
 *.pptx
 *.pdf
+pii/
+__pycache__/
+
