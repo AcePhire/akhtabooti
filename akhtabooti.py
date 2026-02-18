@@ -17,7 +17,7 @@ def help():
 def scan_image(image):
     return pytesseract.image_to_string(image)
 
-def search_for_piis(text):
+def search_for_pii(text):
     rules = get_regexes()
 
     pii = {
@@ -42,7 +42,7 @@ if __name__ == "__main__":
             print(f"Scanning {entry.name}...")
             file = str(entry)
 
-            # Handle file according to type
+            # Extract text from file according to its type
             if is_image(file):
                 image = cv2.imread(file)
                 text = scan_image(image)
@@ -53,6 +53,6 @@ if __name__ == "__main__":
             else:
                 text = extract_text(file)
 
-            search_for_piis(text) 
+            search_for_pii(text) 
             print("-"*TERM_WIDTH)
 
