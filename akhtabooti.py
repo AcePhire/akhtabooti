@@ -1,10 +1,5 @@
-import sys
-import shutil
+import sys, shutil, json
 from pathlib import Path
-
-import pytesseract
-import cv2
-from pdf2image import convert_from_path
 
 from text_utils import * 
 from file_utils import * 
@@ -14,19 +9,16 @@ TERM_WIDTH, TERM_HEIGHT = shutil.get_terminal_size()
 def help():
     print("Usage: python akhtabooti.py <directory to scan> \n")
 
-def scan_image(image):
-    return pytesseract.image_to_string(image)
-
 def search_for_pii(text):
     rules = get_regexes()
 
     pii = {
         "email accounts": email_pii(rules, text),
         "phone numbers": phone_pii(rules, text),
-        "keywords": keyword_pii(rules, text)
+        "other PIIs": keyword_pii(rules, text)
     }
 
-    print(pii)
+    return pii
 
 if __name__ == "__main__":
     # Get directory
@@ -36,6 +28,10 @@ if __name__ == "__main__":
 
     directory = Path(sys.argv[1])
 
+    ocr = initialize_ocr(["en"])
+
+    results = {}
+
     # Scan directory
     for entry in directory.iterdir():
         if entry.is_file():
@@ -44,15 +40,14 @@ if __name__ == "__main__":
 
             # Extract text from file according to its type
             if is_image(file):
-                image = cv2.imread(file)
-                text = scan_image(image)
+                text = scan_image(file, ocr)
             elif is_pdf(file):
-                pdf_pages = convert_from_path(file, 400)
-                for page in pdf_pages:
-                    text = scan_image(page)
+                text = scan_pdf(file, ocr)
             else:
                 text = extract_text(file)
 
-            search_for_pii(text) 
+            results.update({entry.name: search_for_pii(text)}) 
             print("-"*TERM_WIDTH)
 
+    with open("output.json", 'w') as file:
+        json.dump(results, file, indent=4)

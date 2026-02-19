@@ -51,7 +51,6 @@ def keyword_pii(rules, text):
                                   .replace("-", "")
                                   .replace("_", "")
                                   .replace(",", ""), keyword.lower()) > 80:
-                        results.append(word)
+                        results.append(key)
 
-
-    return results
+    return list(set(results))
