@@ -49,5 +49,5 @@ if __name__ == "__main__":
             results.update({entry.name: search_for_pii(text)}) 
             print("-"*TERM_WIDTH)
 
-    with open("output.json", 'w') as file:
+    with open((directory / "output.json").as_posix(), 'w') as file:
         json.dump(results, file, indent=4)
