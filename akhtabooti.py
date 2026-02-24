@@ -35,7 +35,10 @@ if __name__ == "__main__":
     # Scan directory
     for entry in directory.iterdir():
         if entry.is_file():
-            print(f"Scanning {entry.name}...")
+            if entry.name == "output.json":
+                continue
+
+            print(f"\nScanning {entry.name}...")
             file = str(entry)
 
             # Extract text from file according to its type
@@ -44,10 +47,12 @@ if __name__ == "__main__":
             elif is_pdf(file):
                 text = scan_pdf(file, ocr)
             else:
-                text = extract_text(file)
+                text = extract_text(file, ocr)
 
             results.update({entry.name: search_for_pii(text)}) 
             print("-"*TERM_WIDTH)
 
     with open((directory / "output.json").as_posix(), 'w') as file:
         json.dump(results, file, indent=4)
+    
+    print(f"Results are saved at {(directory / "output.json").as_posix()}")

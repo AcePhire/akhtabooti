@@ -1,3 +1,4 @@
 unstructured
 unstructured[all-docs]
 easyocr
+pypandoc-binary
