@@ -47,14 +47,23 @@
          "Work"
       ]
    },
-   "Jordan ID Card": {
+   "Jordanian National ID": {
       "regex":"(?:IDJOR)(?:[A-Z0-9<].+)",
       "region":"Jordan",
       "keywords":[
          "Jordan",
-         "Passport",
          "IDJOR",
-         "<<"
+         "<<",
+	 "ID",
+	 "Card"
+      ]
+   },
+   "Jordanian Passport": {
+      "regex":"(?:P<JOR)(?:[A-Z0-9<].+)",
+      "region":"Jordan",
+      "keywords":[
+	 "Passport",
+	 "JOR"
       ]
    }
 }
