@@ -1,6 +1,8 @@
 import sys, shutil, json
 from pathlib import Path
 
+from datetime import datetime
+
 from text_utils import * 
 from file_utils import * 
 
@@ -33,9 +35,9 @@ if __name__ == "__main__":
     results = {}
 
     # Scan directory
-    for entry in directory.iterdir():
+    for entry in directory.rglob("*"):
         if entry.is_file():
-            if entry.name == "output.json":
+            if "results" in entry.name and "json" in entry.name:
                 continue
 
             print(f"\nScanning {entry.name}...")
@@ -49,10 +51,17 @@ if __name__ == "__main__":
             else:
                 text = extract_text(file, ocr)
 
-            results.update({entry.name: search_for_pii(text)}) 
+            results.update({str(entry.resolve()): search_for_pii(text)}) 
             print("-"*TERM_WIDTH)
 
-    with open((directory / "output.json").as_posix(), 'w') as file:
+    # Get timestamp
+    now = datetime.now()
+    timestamp = now.strftime("%Y-%m-%d_%H%M%S")
+
+    # Save results
+    results_file = (directory / f"results_{timestamp}.json").as_posix()
+
+    with open(results_file, 'w') as file:
         json.dump(results, file, indent=4)
     
-    print(f"Results are saved at {(directory / "output.json").as_posix()}")
+    print(f"Results are saved at {results_file}")
