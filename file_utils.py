@@ -18,13 +18,15 @@ MEDIA_PATHS = {
     ".pptx": "ppt/media/",
 }
 
+
 # Check if the file is an image file
 def is_image(file):
     try:
-        i = Image.open(file)
+        Image.open(file)
         return True
     except:
         return False
+
 
 # Check if the file is a pdf file
 def is_pdf(file):
@@ -34,14 +36,17 @@ def is_pdf(file):
     except:
         return False
 
+
 # Load OCR reader into memory
 def initialize_ocr(langs):
     return easyocr.Reader(langs, gpu=False)
+
 
 # Extract text from image
 def scan_image(image, ocr):
     results = ocr.readtext(image, detail=0)
     return "\n".join(artifact for artifact in results)
+
 
 # Extract text from pdf
 def scan_pdf(file, ocr):
@@ -53,6 +58,7 @@ def scan_pdf(file, ocr):
 
     return text
 
+
 # Extract text from the images within documents
 def scan_document_images(file, ocr):
     text = ""
@@ -62,11 +68,12 @@ def scan_document_images(file, ocr):
         images = [f for f in z.namelist() if f.startswith("Pictures/")]
 
         for image_path in images:
-                with z.open(image_path) as f:
-                    image = Image.open(io.BytesIO(f.read()))
-                    text += scan_image(image, ocr)
+            with z.open(image_path) as f:
+                image = Image.open(io.BytesIO(f.read()))
+                text += scan_image(image, ocr)
 
     return text
+
 
 # Extract text from documents
 def extract_text(file, ocr):
@@ -76,6 +83,6 @@ def extract_text(file, ocr):
     try:
         text += scan_document_images(file, ocr)
     except:
-        pass
+        print("Couldn't scan document images!")
 
     return text

@@ -1,15 +1,20 @@
-import sys, shutil, json
+import sys
+import json
+import shutil
+
 from pathlib import Path
 
 from datetime import datetime
 
-from text_utils import * 
-from file_utils import * 
+from file_utils import *
+from text_utils import *
 
 TERM_WIDTH, TERM_HEIGHT = shutil.get_terminal_size()
 
+
 def help():
     print("Usage: python akhtabooti.py <directory to scan> \n")
+
 
 def search_for_pii(text):
     rules = get_regexes()
@@ -17,10 +22,11 @@ def search_for_pii(text):
     pii = {
         "email accounts": email_pii(rules, text),
         "phone numbers": phone_pii(rules, text),
-        "other PIIs": keyword_pii(rules, text)
+        "other PIIs": keyword_pii(rules, text),
     }
 
     return pii
+
 
 if __name__ == "__main__":
     # Get directory
@@ -51,8 +57,8 @@ if __name__ == "__main__":
             else:
                 text = extract_text(file, ocr)
 
-            results.update({str(entry.resolve()): search_for_pii(text)}) 
-            print("-"*TERM_WIDTH)
+            results.update({str(entry.resolve()): search_for_pii(text)})
+            print("-" * TERM_WIDTH)
 
     # Get timestamp
     now = datetime.now()
@@ -61,7 +67,7 @@ if __name__ == "__main__":
     # Save results
     results_file = (directory / f"results_{timestamp}.json").as_posix()
 
-    with open(results_file, 'w') as file:
+    with open(results_file, "w") as file:
         json.dump(results, file, indent=4)
-    
+
     print(f"Results are saved at {results_file}")
