@@ -38,7 +38,13 @@ if __name__ == "__main__":
 
     ocr = initialize_ocr(["en"])
 
-    results = {}
+    # Get timestamp
+    now = datetime.now()
+    timestamp = now.strftime("%Y-%m-%d_%H%M%S")
+
+    # Create results file
+    results_file_path = (directory / f"results_{timestamp}.json").as_posix()
+    create_results_file(results_file_path)
 
     # Scan directory
     for entry in directory.rglob("*"):
@@ -57,17 +63,8 @@ if __name__ == "__main__":
             else:
                 text = extract_text(file, ocr)
 
-            results.update({str(entry.resolve()): search_for_pii(text)})
+            pii_result = {str(entry.resolve()): search_for_pii(text)}
+            print(json.dumps(pii_result, indent=4))
             print("-" * TERM_WIDTH)
 
-    # Get timestamp
-    now = datetime.now()
-    timestamp = now.strftime("%Y-%m-%d_%H%M%S")
-
-    # Save results
-    results_file = (directory / f"results_{timestamp}.json").as_posix()
-
-    with open(results_file, "w") as file:
-        json.dump(results, file, indent=4)
-
-    print(f"Results are saved at {results_file}")
+            append_to_results_file(pii_result, results_file_path)

@@ -4,6 +4,7 @@ import easyocr
 from PIL import Image
 
 import io
+import json
 from zipfile import ZipFile as zip_file
 from pdf2image import convert_from_path
 
@@ -86,3 +87,20 @@ def extract_text(file, ocr):
         print("Couldn't scan document images!")
 
     return text
+
+# Create results file
+def create_results_file(results_file_path):
+    with open(results_file_path, "w") as file:
+        file.write(json.dumps({}, indent=4))
+        print(f"Creating results file at {results_file_path}")
+
+# Append to the results file
+def append_to_results_file(data, results_file_path):
+    loaded_data = []
+    with open(results_file_path, "r+") as file:
+        loaded_data = json.loads(file.read())
+
+    with open(results_file_path, "w") as file:
+        loaded_data.update(data)
+        file.write(json.dumps(loaded_data, indent=4))
+
